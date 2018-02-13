@@ -78,14 +78,11 @@ var Webcam = NodeWebcam.create( opts ); //starting up the webcam
 
 //---------------------- SERIAL COMMUNICATION (Arduino) ----------------------//
 // start the serial port connection and read on newlines
-var fs = require('fs'),
-    gm = require('gm').subClass({imageMagick: true});
+var gm = require('gm').subClass({imageMagick: true});
 const serial = new SerialPort(process.argv[2], {});
 const parser = new Readline({
   delimiter: '\r\n'
 });
-
-//var soundbox = new SoundBox();
 
 // Read data that is available on the serial port and send it to the websocket
 serial.pipe(parser);
@@ -94,10 +91,6 @@ parser.on('data', function(data) {
   io.emit('server-msg', data);
   if (data=='light'){
      smile();
-     //soundbox.load("beep","beep.wav",function(){
-        //console.log("Loaded beep!");
-     //});
-        
   }
 
 });
@@ -153,21 +146,15 @@ function smile(){
     //return imageName+".jpg";
     // crazytown
     });
-    setTimeout(function(){
-    gm('/home/pi/distant-pictures/public/'+imageName+'.jpg')
+    gm('public/'+imageName+'.jpg')
     .flip()
     .magnify()
     .rotate('green', 45)
     .blur(7, 3)
     .crop(300, 300, 150, 130)
     .edge(3)
-    .write('/home/pi/distant-pictures/public/warped_'+imageName+'.jpg', function (err) {
+    .write('/public/warped_'+imageName+'.jpg', function (err) {
        if (err) console.log(err);
-    
-    })
-    console.log('warping picture at warped_'+imageName+'.jpg');
-   // io.emit('newPicture',('warped_'+imageName+'.jpg'));
-    
-    }, 3000);
+
+    });
 }
-    
